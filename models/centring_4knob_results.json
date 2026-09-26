@@ -1,0 +1,89 @@
+{
+  "reference_optimum": {
+    "dof_nm": 290.0,
+    "dose": 25.158269563689828,
+    "focus": 6.115888059139252,
+    "peb_temp": 119.92017622105777,
+    "thickness": 154.1322292946279
+  },
+  "model_based_bo_median_dof_by_fields": {
+    "36": 0.0,
+    "60": 95.0,
+    "90": 70.0,
+    "120": 250.0,
+    "150": 255.0
+  },
+  "naive_bo_median_dof_by_fields": {
+    "24": 0.0,
+    "45": 95.0,
+    "60": 190.0,
+    "75": 190.0,
+    "90": 190.0,
+    "120": 190.0
+  },
+  "grid_median_dof_by_fields": {
+    "140": 250.0,
+    "315": 235.0,
+    "567": 260.0,
+    "1008": 205.0
+  },
+  "bo_final_recipes": [
+    {
+      "dof": 250.0,
+      "dose": 21.52,
+      "focus": -24.97,
+      "peb_temp": 124.8,
+      "thickness": 149.33
+    },
+    {
+      "dof": 260.0,
+      "dose": 44.05,
+      "focus": -14.1,
+      "peb_temp": 100.81,
+      "thickness": 155.06
+    },
+    {
+      "dof": 270.0,
+      "dose": 21.79,
+      "focus": -6.54,
+      "peb_temp": 124.86,
+      "thickness": 122.96
+    },
+    {
+      "dof": 270.0,
+      "dose": 26.6,
+      "focus": -3.09,
+      "peb_temp": 117.31,
+      "thickness": 119.33
+    },
+    {
+      "dof": 0.0,
+      "dose": 20.44,
+      "focus": -5.28,
+      "peb_temp": 122.4,
+      "thickness": 105.25
+    },
+    {
+      "dof": 190.0,
+      "dose": 25.56,
+      "focus": -21.53,
+      "peb_temp": 113.3,
+      "thickness": 144.67
+    },
+    {
+      "dof": 260.0,
+      "dose": 22.68,
+      "focus": -9.14,
+      "peb_temp": 124.25,
+      "thickness": 120.06
+    },
+    {
+      "dof": 240.0,
+      "dose": 45.57,
+      "focus": -19.72,
+      "peb_temp": 100.46,
+      "thickness": 116.38
+    }
+  ],
+  "n_seeds": 8
+}

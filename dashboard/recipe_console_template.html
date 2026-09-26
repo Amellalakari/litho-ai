@@ -1,0 +1,365 @@
+<title>Litho Recipe Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f1f2f0; --panel:#ffffff; --ink:#1a2129; --ink2:#4a5561; --muted:#7b8691;
+  --line:#dde1dd; --grid:#e9ece9;
+  --amber:#b87d00; --amber-soft:#fbefcf; --curve:#2c62a8;
+  --ok:#2e7d4f; --ok-bg:#e3f2e8; --warn:#9a6700; --warn-bg:#fdf1d6; --bad:#b3372f; --bad-bg:#f9e2df;
+  --fail:#cfd4d0;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#12161a; --panel:#1a2026; --ink:#e7ebee; --ink2:#b0bac3; --muted:#86919b;
+    --line:#2c343c; --grid:#242b32;
+    --amber:#f2b632; --amber-soft:#3a2f14; --curve:#7fb0ef;
+    --ok:#6fcf97; --ok-bg:#16301f; --warn:#f2c14e; --warn-bg:#3a2f14; --bad:#f08a80; --bad-bg:#3a1c1a;
+    --fail:#2f363d;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#12161a; --panel:#1a2026; --ink:#e7ebee; --ink2:#b0bac3; --muted:#86919b;
+  --line:#2c343c; --grid:#242b32;
+  --amber:#f2b632; --amber-soft:#3a2f14; --curve:#7fb0ef;
+  --ok:#6fcf97; --ok-bg:#16301f; --warn:#f2c14e; --warn-bg:#3a2f14; --bad:#f08a80; --bad-bg:#3a1c1a;
+  --fail:#2f363d;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--sans);padding-inline:16px;padding-block:20px 40px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px;border-bottom:1px solid var(--line);padding-bottom:14px}
+h1{font:600 26px/1.15 var(--cond);margin:0;letter-spacing:.01em;text-wrap:balance}
+h1 span{color:var(--amber)}
+.sub{color:var(--ink2);margin:4px 0 0;max-width:62ch}
+.tool{font:12px/1.6 var(--mono);color:var(--muted);text-align:right}
+.tool b{color:var(--ink2);font-weight:500}
+.main{display:grid;grid-template-columns:300px 1fr;gap:18px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+h2{font:600 13px/1.2 var(--cond);text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);margin:0 0 12px}
+.knob{display:grid;grid-template-columns:1fr auto;gap:2px 8px;margin-bottom:14px}
+.knob label{font-weight:500}
+.knob output{font:500 13px var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.knob output small{color:var(--muted);font-weight:400}
+.knob input{grid-column:1/-1;width:100%;accent-color:var(--amber)}
+.knob .hint{grid-column:1/-1;font-size:12px;color:var(--muted)}
+.group{border-top:1px dashed var(--line);padding-top:12px;margin-top:4px}
+button{font:600 13px var(--sans);border-radius:5px;border:1px solid var(--amber);background:var(--amber);color:#1a1405;padding:9px 12px;cursor:pointer;width:100%}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line);margin-top:8px}
+button:focus-visible,input:focus-visible{outline:2px solid var(--curve);outline-offset:2px}
+.right{display:grid;gap:18px;min-width:0}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+@media (max-width:620px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{padding:12px 16px;border-right:1px solid var(--line)}
+.kpi:last-child{border-right:0}
+@media (max-width:620px){.kpi:nth-child(2){border-right:0}.kpi:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+.kpi .lab{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.kpi .val{font:500 24px/1.3 var(--mono);font-variant-numeric:tabular-nums}
+.kpi .val small{font-size:13px;color:var(--muted)}
+.pill{display:inline-block;font:600 12px var(--sans);padding:3px 9px;border-radius:99px;margin-top:6px}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}.pill.warn{background:var(--warn-bg);color:var(--warn)}.pill.bad{background:var(--bad-bg);color:var(--bad)}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:1000px){.charts{grid-template-columns:1fr}}
+.chart canvas{width:100%;height:auto;aspect-ratio:1.25;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink2);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.legend i.box{height:10px;width:12px}
+.stat-row{display:flex;flex-wrap:wrap;gap:6px 18px;font:13px var(--mono);color:var(--ink2);margin-top:6px}
+.stat-row b{color:var(--ink);font-weight:500}
+.rec{display:grid;gap:10px}
+.rec p{margin:0;color:var(--ink2)}
+.rec table{border-collapse:collapse;font:13px var(--mono);font-variant-numeric:tabular-nums}
+.rec td{padding:3px 14px 3px 0}
+.rec td:first-child{color:var(--muted);font-family:var(--sans)}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:860px){.notes{grid-template-columns:1fr}}
+.notes ul{margin:0;padding-left:18px;color:var(--ink2)}
+.notes li{margin-bottom:6px}
+.notes table{width:100%;border-collapse:collapse;font-size:13px}
+.notes th,.notes td{text-align:left;padding:6px 8px 6px 0;border-bottom:1px solid var(--line)}
+.notes td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.notes th{font-weight:500;color:var(--muted);font-size:12px}
+.scroll{overflow-x:auto}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Litho Recipe <span>Console</span></h1>
+      <p class="sub">An ML surrogate of a physics-based lithography simulator. Move a process knob and the predicted CD, the Bossung curves and the dose–focus window update instantly.</p>
+    </div>
+    <div class="tool">ArF <b>193 nm</b> · NA <b>0.93</b> · σ <b>0.75</b><br>90 nm lines · spec <b>90 ± 9 nm</b></div>
+  </header>
+
+  <div class="main">
+    <aside class="panel" aria-label="Process knobs">
+      <h2>Exposure</h2>
+      <div class="knob"><label for="dose">Dose</label><output id="o-dose"></output><input type="range" id="dose" min="18" max="55" step="0.1"></div>
+      <div class="knob"><label for="focus">Focus</label><output id="o-focus"></output><input type="range" id="focus" min="-180" max="180" step="1"><span class="hint">0 = best focus at mid-resist</span></div>
+      <div class="group">
+        <h2>Pattern &amp; resist</h2>
+        <div class="knob"><label for="pitch">Pitch</label><output id="o-pitch"></output><input type="range" id="pitch" min="180" max="400" step="1"><span class="hint" id="k1"></span></div>
+        <div class="knob"><label for="thickness">Resist thickness</label><output id="o-thickness"></output><input type="range" id="thickness" min="100" max="160" step="1"></div>
+      </div>
+      <div class="group">
+        <h2>Post-exposure bake</h2>
+        <div class="knob"><label for="peb_temp">PEB temperature</label><output id="o-peb_temp"></output><input type="range" id="peb_temp" min="100" max="130" step="0.5"></div>
+        <div class="knob"><label for="peb_time">PEB time</label><output id="o-peb_time"></output><input type="range" id="peb_time" min="45" max="90" step="1"></div>
+      </div>
+      <button id="suggest" type="button">Centre this recipe</button>
+      <button id="reset" class="ghost" type="button">Reset to baseline</button>
+    </aside>
+
+    <section class="right">
+      <div class="kpis" aria-live="polite">
+        <div class="kpi"><div class="lab">Predicted CD</div><div class="val" id="v-cd"></div><span class="pill" id="v-spec"></span></div>
+        <div class="kpi"><div class="lab">LER <span style="text-transform:none">(3σ proxy)</span></div><div class="val" id="v-ler"></div></div>
+        <div class="kpi"><div class="lab">Print probability</div><div class="val" id="v-p"></div></div>
+        <div class="kpi"><div class="lab">DOF @ 5% EL</div><div class="val" id="v-dof"></div><span class="pill" id="v-dofnote"></span></div>
+      </div>
+
+      <div class="charts">
+        <div class="panel chart">
+          <h2>Dose–focus process window</h2>
+          <canvas id="pw" width="560" height="448" aria-label="Heat map of predicted CD over dose and focus"></canvas>
+          <div class="legend"><span><i class="box" style="width:44px;background:linear-gradient(90deg,#440154,#3b528b,#21918c,#5ec962,#fde725)"></i>CD 20 → 180 nm</span><span><i style="background:var(--amber)"></i>spec edges (81 / 99 nm)</span><span><i class="box" style="background:var(--fail)"></i>pattern fails</span><span>● current recipe</span></div>
+          <div class="stat-row" id="pw-stats"></div>
+        </div>
+        <div class="panel chart">
+          <h2>Bossung curves</h2>
+          <canvas id="bossung" width="560" height="448" aria-label="CD versus focus at five doses"></canvas>
+          <div class="legend" id="b-legend"></div>
+        </div>
+      </div>
+
+      <div class="panel rec">
+        <h2>Recipe centring</h2>
+        <p id="rec-text">Press <b>Centre this recipe</b> to search dose and focus for the largest depth of focus at 5% exposure latitude, keeping pitch, resist and bake as set.</p>
+        <div class="scroll"><table id="rec-table" hidden></table></div>
+      </div>
+
+      <div class="notes">
+        <div class="panel">
+          <h2>How good is the surrogate</h2>
+          <div class="scroll"><table id="metrics"></table></div>
+        </div>
+        <div class="panel">
+          <h2>What this is, and isn't</h2>
+          <ul>
+            <li>Trained on 8,000 simulated exposure fields (Latin-hypercube over all six knobs) with scanner dose/focus jitter and CD-SEM noise added.</li>
+            <li>The simulator chains Abbe partially coherent imaging, defocus and spherical aberration, a swing curve, acid generation, PEB diffusion and threshold development.</li>
+            <li>It is not calibrated to a real resist or scanner. Absolute numbers are illustrative; trends and workflow are the point.</li>
+            <li>Inference runs entirely in this page: a 3-layer neural network, about a microsecond per field.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const KN = ["dose","focus","pitch","thickness","peb_temp","peb_time"];
+const UNITS = {dose:"mJ/cm²",focus:"nm",pitch:"nm",thickness:"nm",peb_temp:"°C",peb_time:"s"};
+const BASE = {dose:31.5,focus:0,pitch:180,thickness:120,peb_temp:110,peb_time:60};
+const TARGET=90, TOL=9, EL=0.05;
+const $ = id => document.getElementById(id);
+
+// ---------- neural network inference (weights exported from scikit-learn)
+function prep(m){ m.W = m.weights.map(w=>w.map(r=>Float64Array.from(r))); m.B = m.biases.map(b=>Float64Array.from(b)); return m; }
+const M = {cd:prep(DATA.cd), p:prep(DATA.print), ler:prep(DATA.ler)};
+function forward(m, x){
+  let h = new Float64Array(6);
+  for(let i=0;i<6;i++) h[i]=(x[i]-m.x_mean[i])/m.x_std[i];
+  for(let L=0;L<m.W.length;L++){
+    const W=m.W[L], b=m.B[L], out=new Float64Array(b.length);
+    for(let j=0;j<b.length;j++) out[j]=b[j];
+    for(let i=0;i<h.length;i++){ const hi=h[i], row=W[i]; for(let j=0;j<out.length;j++) out[j]+=hi*row[j]; }
+    if(L<m.W.length-1) for(let j=0;j<out.length;j++) out[j]=Math.tanh(out[j]);
+    h=out;
+  }
+  const z=h[0];
+  return m.kind==="classifier" ? 1/(1+Math.exp(-z)) : z*m.y_std+m.y_mean;
+}
+const predict = s => { const x=KN.map(k=>s[k]); const p=forward(M.p,x);
+  return {cd:forward(M.cd,x), p, ler:Math.exp(forward(M.ler,x))}; };
+
+// ---------- state
+const S = {...BASE};
+function readKnobs(){ KN.forEach(k=>S[k]=parseFloat($(k).value)); }
+function writeKnobs(){ KN.forEach(k=>$(k).value=S[k]); }
+
+// ---------- process-window grid (dose x focus) for the current pitch/resist/bake
+const GD = {d0:18, d1:55, nd:149, f0:-300, f1:300, nf:121};
+let grid=null, gridKey="";
+function buildGrid(){
+  const key=[S.pitch,S.thickness,S.peb_temp,S.peb_time].join("|");
+  if(key===gridKey) return; gridKey=key;
+  const cd=new Float64Array(GD.nd*GD.nf), pr=new Float64Array(GD.nd*GD.nf);
+  for(let i=0;i<GD.nd;i++){ const d=GD.d0+i*(GD.d1-GD.d0)/(GD.nd-1);
+    for(let j=0;j<GD.nf;j++){ const f=GD.f0+j*(GD.f1-GD.f0)/(GD.nf-1);
+      const x=[d,f,S.pitch,S.thickness,S.peb_temp,S.peb_time];
+      pr[i*GD.nf+j]=forward(M.p,x); cd[i*GD.nf+j]=forward(M.cd,x); } }
+  grid={cd,pr};
+}
+const fStep=(GD.f1-GD.f0)/(GD.nf-1), dStep=(GD.d1-GD.d0)/(GD.nd-1);
+function inSpecAt(d, j){ // linear interpolation along dose at focus index j
+  const t=(d-GD.d0)/dStep; if(t<0||t>GD.nd-1) return false;
+  const i=Math.min(Math.floor(t),GD.nd-2), a=t-i;
+  const p=(1-a)*grid.pr[i*GD.nf+j]+a*grid.pr[(i+1)*GD.nf+j]; if(p<0.5) return false;
+  const c=(1-a)*grid.cd[i*GD.nf+j]+a*grid.cd[(i+1)*GD.nf+j];
+  return Math.abs(c-TARGET)<=TOL;
+}
+function centredDOF(d, f){ // 2 x focus margin to the nearest window edge, all doses within +/-2.5%
+  const ok=j=>inSpecAt(d*(1-EL/2),j)&&inSpecAt(d,j)&&inSpecAt(d*(1+EL/2),j);
+  const j0=Math.round((f-GD.f0)/fStep); if(j0<0||j0>=GD.nf||!ok(j0)) return 0;
+  let hi=j0; while(hi+1<GD.nf&&ok(hi+1)) hi++;
+  let lo=j0; while(lo-1>=0&&ok(lo-1)) lo--;
+  const fj=GD.f0+j0*fStep;
+  return 2*Math.min(GD.f0+hi*fStep-fj, fj-(GD.f0+lo*fStep));
+}
+function windowStats(){ // max DOF at 5% EL anywhere, and max EL
+  let bestDOF=0, bestD=null, bestF=null;
+  for(let i=0;i<GD.nd;i+=2){ const d=GD.d0+i*dStep;
+    for(let j=24;j<=96;j+=2){ const f=GD.f0+j*fStep; const v=centredDOF(d,f);
+      if(v>bestDOF){bestDOF=v;bestD=d;bestF=f;} } }
+  return {bestDOF,bestD,bestF};
+}
+
+// ---------- drawing
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function viridis(t){ const s=[[68,1,84],[59,82,139],[33,145,140],[94,201,98],[253,231,37]];
+  t=Math.max(0,Math.min(1,t))*4; const i=Math.min(3,Math.floor(t)), a=t-i;
+  return s[i].map((v,k)=>Math.round(v+(s[i+1][k]-v)*a)); }
+function setupCanvas(c){ const r=window.devicePixelRatio||1, w=c.clientWidth||560, h=Math.round(w/1.25);
+  if(c.width!==Math.round(w*r)){ c.width=Math.round(w*r); c.height=Math.round(h*r); }
+  const g=c.getContext("2d"); g.setTransform(r,0,0,r,0,0); g.clearRect(0,0,w,h); return {g,w,h}; }
+function axes(g,w,h,pad,xr,yr,xt,yt,xl,yl){
+  const X=v=>pad.l+(v-xr[0])/(xr[1]-xr[0])*(w-pad.l-pad.r), Y=v=>h-pad.b-(v-yr[0])/(yr[1]-yr[0])*(h-pad.t-pad.b);
+  g.font=`11px ${css("--mono")}`; g.fillStyle=css("--muted"); g.strokeStyle=css("--grid"); g.lineWidth=1;
+  g.textAlign="center"; g.textBaseline="top";
+  xt.forEach(v=>{ g.beginPath(); g.moveTo(X(v),pad.t); g.lineTo(X(v),h-pad.b); g.stroke(); g.fillText(v,X(v),h-pad.b+5); });
+  g.textAlign="right"; g.textBaseline="middle";
+  yt.forEach(v=>{ g.beginPath(); g.moveTo(pad.l,Y(v)); g.lineTo(w-pad.r,Y(v)); g.stroke(); g.fillText(v,pad.l-6,Y(v)); });
+  g.font=`12px ${css("--sans")}`; g.fillStyle=css("--ink2"); g.textAlign="center"; g.textBaseline="bottom";
+  g.fillText(xl,(pad.l+w-pad.r)/2,h-2);
+  g.save(); g.translate(12,(pad.t+h-pad.b)/2); g.rotate(-Math.PI/2); g.textBaseline="middle"; g.fillText(yl,0,0); g.restore();
+  return {X,Y};
+}
+function drawWindow(){
+  const c=$("pw"), {g,w,h}=setupCanvas(c), pad={l:52,r:12,t:10,b:40};
+  const xr=[-200,200], yr=[18,55];
+  const iw=w-pad.l-pad.r, ih=h-pad.t-pad.b, img=g.createImageData(Math.max(1,Math.round(iw)),Math.max(1,Math.round(ih)));
+  const fail=css("--fail"), fr=parseInt(fail.slice(1,3),16), fg=parseInt(fail.slice(3,5),16), fb=parseInt(fail.slice(5,7),16);
+  for(let py=0;py<img.height;py++){ const d=yr[1]-py/img.height*(yr[1]-yr[0]); const i=Math.round((d-GD.d0)/dStep);
+    for(let px=0;px<img.width;px++){ const f=xr[0]+px/img.width*(xr[1]-xr[0]); const j=Math.round((f-GD.f0)/fStep);
+      const k=i*GD.nf+j, o=(py*img.width+px)*4; let rgb;
+      if(grid.pr[k]<0.5) rgb=[fr,fg,fb]; else rgb=viridis((grid.cd[k]-20)/160);
+      img.data[o]=rgb[0];img.data[o+1]=rgb[1];img.data[o+2]=rgb[2];img.data[o+3]=255; } }
+  const tmp=document.createElement("canvas"); tmp.width=img.width; tmp.height=img.height; tmp.getContext("2d").putImageData(img,0,0);
+  g.clearRect(0,0,w,h); g.imageSmoothingEnabled=true; g.drawImage(tmp,pad.l,pad.t,iw,ih);
+  const {X,Y}=axes(g,w,h,pad,xr,yr,[-200,-100,0,100,200],[20,25,30,35,40,45,50,55],"Focus (nm)","Dose (mJ/cm²)");
+  // spec contours via marching on grid cells (edges at 81 and 99 nm)
+  g.strokeStyle=css("--amber"); g.lineWidth=2;
+  [TARGET-TOL,TARGET+TOL].forEach(lvl=>{ g.beginPath();
+    for(let i=0;i<GD.nd-1;i++){ const d0=GD.d0+i*dStep, d1=d0+dStep; if(d1<yr[0]||d0>yr[1]) continue;
+      for(let j=0;j<GD.nf-1;j++){ const f0=GD.f0+j*fStep, f1=f0+fStep; if(f1<xr[0]||f0>xr[1]) continue;
+        const v=[[i,j],[i,j+1],[i+1,j+1],[i+1,j]].map(([a,b])=>grid.pr[a*GD.nf+b]<0.5?NaN:grid.cd[a*GD.nf+b]);
+        if(v.some(isNaN)) continue;
+        const P=[[d0,f0],[d0,f1],[d1,f1],[d1,f0]], pts=[];
+        for(let e=0;e<4;e++){ const a=v[e], b=v[(e+1)%4]; if((a-lvl)*(b-lvl)<0){ const t=(lvl-a)/(b-a);
+          const A=P[e], B=P[(e+1)%4]; pts.push([A[0]+t*(B[0]-A[0]),A[1]+t*(B[1]-A[1])]); } }
+        if(pts.length>=2){ g.moveTo(X(pts[0][1]),Y(pts[0][0])); g.lineTo(X(pts[1][1]),Y(pts[1][0])); }
+        if(pts.length===4){ g.moveTo(X(pts[2][1]),Y(pts[2][0])); g.lineTo(X(pts[3][1]),Y(pts[3][0])); } } }
+    g.stroke(); });
+  // current recipe marker
+  const cx=X(Math.max(xr[0],Math.min(xr[1],S.focus))), cy=Y(S.dose);
+  g.fillStyle="#fff"; g.strokeStyle="#111"; g.lineWidth=1.5; g.beginPath(); g.arc(cx,cy,6,0,7); g.fill(); g.stroke();
+}
+function drawBossung(){
+  const c=$("bossung"), {g,w,h}=setupCanvas(c), pad={l:52,r:12,t:10,b:40};
+  const xr=[-200,200], yr=[20,180];
+  const {X,Y}=axes(g,w,h,pad,xr,yr,[-200,-100,0,100,200],[20,40,60,80,100,120,140,160,180],"Focus (nm)","CD (nm)");
+  g.fillStyle=css("--amber-soft"); g.fillRect(pad.l,Y(TARGET+TOL),w-pad.l-pad.r,Y(TARGET-TOL)-Y(TARGET+TOL));
+  const offs=[-0.10,-0.05,0,0.05,0.10], leg=[];
+  offs.forEach((o,n)=>{ const d=S.dose*(1+o); const t=n/(offs.length-1);
+    const col=o===0?css("--ink"):`rgb(${viridis(0.15+0.7*t).join(",")})`;
+    g.strokeStyle=col; g.lineWidth=o===0?2.4:1.6; g.beginPath(); let pen=false;
+    for(let f=xr[0];f<=xr[1];f+=4){ const x=[d,f,S.pitch,S.thickness,S.peb_temp,S.peb_time];
+      if(forward(M.p,x)<0.5){pen=false;continue;} const v=forward(M.cd,x); if(v<yr[0]||v>yr[1]){pen=false;continue;}
+      if(pen) g.lineTo(X(f),Y(v)); else {g.moveTo(X(f),Y(v)); pen=true;} }
+    g.stroke(); leg.push(`<span><i style="background:${col}"></i>${d.toFixed(1)} mJ/cm²</span>`); });
+  g.strokeStyle=css("--muted"); g.setLineDash([4,4]); g.lineWidth=1;
+  g.beginPath(); g.moveTo(X(S.focus),pad.t); g.lineTo(X(S.focus),h-pad.b); g.stroke(); g.setLineDash([]);
+  $("b-legend").innerHTML=leg.join("")+`<span><i style="background:var(--amber-soft);height:10px"></i>spec band</span>`;
+}
+
+// ---------- update
+function fmt(v,k){ return k==="dose"?v.toFixed(1):k==="peb_temp"?v.toFixed(1):Math.round(v); }
+function update(){
+  readKnobs();
+  KN.forEach(k=>$("o-"+k).innerHTML=`${fmt(S[k],k)} <small>${UNITS[k]}</small>`);
+  $("k1").textContent=`half-pitch k₁ = ${(S.pitch/2*0.93/193).toFixed(2)}`;
+  buildGrid();
+  const r=predict(S);
+  const prints=r.p>=0.5;
+  $("v-cd").innerHTML=prints?`${r.cd.toFixed(1)} <small>nm</small>`:"—";
+  const sp=$("v-spec");
+  if(!prints){ sp.className="pill bad"; sp.textContent="Pattern fails"; }
+  else if(Math.abs(r.cd-TARGET)<=TOL){ sp.className="pill ok"; sp.textContent=`In spec (${(r.cd-TARGET>=0?"+":"")}${(r.cd-TARGET).toFixed(1)} nm)`; }
+  else { sp.className="pill warn"; sp.textContent=r.cd>TARGET?"Too wide":"Too narrow"; }
+  $("v-ler").innerHTML=prints?`${r.ler.toFixed(1)} <small>nm</small>`:"—";
+  $("v-p").innerHTML=`${(r.p*100).toFixed(0)}<small>%</small>`;
+  const dof=centredDOF(S.dose,S.focus); $("v-dof").innerHTML=`${Math.round(dof)} <small>nm</small>`;
+  const dn=$("v-dofnote"); if(dof>=200){dn.className="pill ok";dn.textContent="Robust";} else if(dof>0){dn.className="pill warn";dn.textContent="Tight margin";} else {dn.className="pill bad";dn.textContent="Off window";}
+  drawWindow(); drawBossung();
+}
+let wsKey="";
+function updateStats(){
+  if(wsKey===gridKey) return; wsKey=gridKey;
+  const ws=windowStats();
+  $("pw-stats").innerHTML = ws.bestDOF>0
+    ? `<span>Max DOF @ 5% EL <b>${Math.round(ws.bestDOF)} nm</b></span><span>at <b>${ws.bestD.toFixed(1)} mJ/cm²</b>, focus <b>${Math.round(ws.bestF)} nm</b></span>`
+    : `<span>No 5% EL window at this pitch, resist and bake</span>`;
+  return ws;
+}
+function centre(){
+  const ws=windowStats();
+  if(ws.bestDOF<=0){ $("rec-text").textContent="No recipe reaches 5% exposure latitude with these pattern, resist and bake settings. Try a lower PEB temperature or a larger pitch."; $("rec-table").hidden=true; return; }
+  const before={dose:S.dose,focus:S.focus,dof:centredDOF(S.dose,S.focus)};
+  S.dose=+ws.bestD.toFixed(1); S.focus=Math.round(ws.bestF); writeKnobs(); update();
+  $("rec-text").innerHTML=`Moved to the centre of the widest window the surrogate predicts for pitch ${Math.round(S.pitch)} nm, ${Math.round(S.thickness)} nm resist, PEB ${S.peb_temp.toFixed(1)} °C / ${Math.round(S.peb_time)} s. Confirm on the scanner with a small FEM around this point.`;
+  const t=$("rec-table"); t.hidden=false;
+  t.innerHTML=`<tr><td></td><td>before</td><td>centred</td></tr>
+    <tr><td>Dose</td><td>${before.dose.toFixed(1)}</td><td>${S.dose.toFixed(1)} mJ/cm²</td></tr>
+    <tr><td>Focus</td><td>${Math.round(before.focus)}</td><td>${S.focus} nm</td></tr>
+    <tr><td>DOF @ 5% EL</td><td>${Math.round(before.dof)}</td><td>${Math.round(centredDOF(S.dose,S.focus))} nm</td></tr>`;
+}
+function renderMetrics(){
+  const m=DATA.metrics;
+  const rows=[
+    ["Print / fail classifier", `${(m.clf_mlp.accuracy*100).toFixed(1)}% accuracy`],
+    ["CD error vs true CD (all printed)", `${m.cd_mlp.rmse_vs_true.toFixed(1)} nm RMSE`],
+    ["CD error inside 70–110 nm", `${m.cd_mlp.rmse_vs_true_in_70_110nm.toFixed(1)} nm RMSE`],
+    ["CD-SEM + scanner noise, same region", `${m["cd_noise_floor_rmse_in_70_110nm"].toFixed(1)} nm RMSE`],
+    ["Speed vs physics simulator", `${Math.round(m.speed.speedup_mlp).toLocaleString()}× faster`]];
+  $("metrics").innerHTML=`<tr><th>Held-out test (1,600 fields)</th><th style="text-align:right">Neural net</th></tr>`+
+    rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td></tr>`).join("");
+}
+
+let raf=0;
+function schedule(){ cancelAnimationFrame(raf); raf=requestAnimationFrame(()=>{update(); updateStats();}); }
+KN.forEach(k=>$(k).addEventListener("input",schedule));
+$("suggest").addEventListener("click",centre);
+$("reset").addEventListener("click",()=>{Object.assign(S,BASE); writeKnobs(); $("rec-table").hidden=true; schedule();});
+window.addEventListener("resize",schedule);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",schedule);
+new MutationObserver(schedule).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+writeKnobs(); renderMetrics(); update(); updateStats();
+</script>

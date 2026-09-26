@@ -1,0 +1,9 @@
+numpy>=1.24
+scipy>=1.10
+pandas>=2.0
+scikit-learn>=1.4
+xgboost>=2.0
+matplotlib>=3.7
+torch>=2.2
+pillow>=10
+jupyter

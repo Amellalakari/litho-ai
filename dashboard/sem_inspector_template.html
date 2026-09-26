@@ -1,0 +1,260 @@
+<title>CD-SEM Inspector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f1f2f0; --panel:#ffffff; --ink:#1a2129; --ink2:#4a5561; --muted:#7b8691;
+  --line:#dde1dd; --grid:#e9ecef;
+  --amber:#b87d00; --amber-soft:#fbefcf;
+  --unet:#2c62a8; --classic:#b3372f;
+  --ok:#2e7d4f; --ok-bg:#e3f2e8; --bad:#b3372f; --bad-bg:#f9e2df;
+  --particle:#3c8d5a; --bridge:#d64541; --break:#8e44ad;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#12161a; --panel:#1a2026; --ink:#e7ebee; --ink2:#b0bac3; --muted:#86919b;
+    --line:#2c343c; --grid:#242b32; --amber:#f2b632; --amber-soft:#3a2f14;
+    --unet:#7fb0ef; --classic:#f08a80; --ok:#6fcf97; --ok-bg:#16301f; --bad:#f08a80; --bad-bg:#3a1c1a;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#12161a; --panel:#1a2026; --ink:#e7ebee; --ink2:#b0bac3; --muted:#86919b;
+  --line:#2c343c; --grid:#242b32; --amber:#f2b632; --amber-soft:#3a2f14;
+  --unet:#7fb0ef; --classic:#f08a80; --ok:#6fcf97; --ok-bg:#16301f; --bad:#f08a80; --bad-bg:#3a1c1a;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--sans);padding-inline:16px;padding-block:20px 40px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px;border-bottom:1px solid var(--line);padding-bottom:14px}
+h1{font:600 26px/1.15 var(--cond);margin:0;letter-spacing:.01em;text-wrap:balance}
+h1 span{color:var(--amber)}
+.sub{color:var(--ink2);margin:4px 0 0;max-width:64ch}
+.tool{font:12px/1.6 var(--mono);color:var(--muted);text-align:right}
+.tool b{color:var(--ink2);font-weight:500}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+h2{font:600 13px/1.2 var(--cond);text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);margin:0 0 12px}
+.lead{color:var(--ink2);margin:-4px 0 14px;max-width:70ch}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);background:var(--panel);border:1px solid var(--line);border-radius:6px}
+@media (max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{padding:12px 16px;border-right:1px solid var(--line)}
+.kpi:last-child{border-right:0}
+@media (max-width:720px){.kpi:nth-child(2){border-right:0}.kpi:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+.kpi .lab{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.kpi .val{font:500 22px/1.3 var(--mono);font-variant-numeric:tabular-nums}
+.kpi .val small{font-size:13px;color:var(--muted)}
+.kpi .cmp{font-size:12px;color:var(--ink2)}
+.inspect{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:18px}
+@media (max-width:860px){.inspect{grid-template-columns:1fr}}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.thumb{border:2px solid transparent;border-radius:4px;padding:0;background:none;cursor:pointer;position:relative;display:block}
+.thumb img{display:block;width:100%;border-radius:2px}
+.thumb[aria-pressed="true"]{border-color:var(--amber)}
+.thumb:focus-visible{outline:2px solid var(--unet);outline-offset:2px}
+.thumb .tag{position:absolute;left:4px;bottom:4px;font:500 10px var(--mono);background:rgba(0,0,0,.65);color:#fff;padding:1px 5px;border-radius:3px}
+.viewer{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:560px){.viewer{grid-template-columns:1fr}}
+.stage{position:relative;width:100%;max-width:420px;aspect-ratio:1;border-radius:4px;overflow:hidden;background:#000}
+.stage img{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
+.stage svg{position:absolute;inset:0;width:100%;height:100%}
+.scale{font:11px var(--mono);color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:8px}
+.scale i{display:inline-block;height:3px;background:var(--ink2);width:calc(100% * 100 / 576)}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:13px;color:var(--ink2)}
+.toggles label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.toggles input{accent-color:var(--amber)}
+table.read{width:100%;border-collapse:collapse;font-size:13px}
+table.read th,table.read td{padding:7px 8px 7px 0;border-bottom:1px solid var(--line);text-align:left}
+table.read th{font-weight:500;color:var(--muted);font-size:12px}
+table.read td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.err{font-size:11px;color:var(--muted)}
+.pill{display:inline-block;font:600 12px var(--sans);padding:2px 9px;border-radius:99px}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}.pill.bad{background:var(--bad-bg);color:var(--bad)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink2);margin-top:10px}
+.legend i{display:inline-block;width:12px;height:10px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.explore{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:18px;align-items:start}
+@media (max-width:760px){.explore{grid-template-columns:1fr}}
+.slider{display:grid;gap:6px;margin-bottom:12px}
+.slider label{display:flex;justify-content:space-between;font-weight:500}
+.slider output{font:500 13px var(--mono)}
+.slider input{width:100%;accent-color:var(--amber)}
+.ticks{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--muted)}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:860px){.charts{grid-template-columns:1fr}}
+.chart svg{width:100%;height:auto;display:block}
+.chart .legend i{height:3px}
+.fem img{width:100%;height:auto;border-radius:4px;background:#fff}
+.scroll{overflow-x:auto}
+.notes ul{margin:0;padding-left:18px;color:var(--ink2);max-width:80ch}
+.notes li{margin-bottom:6px}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>CD-SEM <span>Inspector</span></h1>
+      <p class="sub">One U-Net reads top-down SEM images of resist lines. It measures CD and line-edge roughness edge by edge, and finds and locates bridges, breaks and particles. Compared here with a classical line-scan CD-SEM algorithm.</p>
+    </div>
+    <div class="tool">3.0 nm/pixel · <b>576 nm</b> field<br>5-class U-Net · <b>0.93 M</b> parameters</div>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <section class="panel">
+    <h2>Inspect an image</h2>
+    <p class="lead">Held-out test images. Tags show the true defect and the number of SEM frames averaged; fewer frames means a faster, noisier scan.</p>
+    <div class="inspect">
+      <div class="thumbs" id="thumbs" role="group" aria-label="Test images"></div>
+      <div class="viewer">
+        <div>
+          <div class="stage" id="stage"><img id="st-img" alt="SEM image"><img id="st-ov" alt=""><svg id="st-box" viewBox="0 0 192 192" aria-hidden="true"></svg></div>
+          <div class="scale"><i></i>100 nm</div>
+          <div class="toggles">
+            <label><input type="checkbox" id="t-ov" checked>U-Net map</label>
+            <label><input type="checkbox" id="t-box" checked>Defect boxes</label>
+          </div>
+          <div class="legend"><span><i style="background:rgba(91,155,213,.55)"></i>line</span><span><i style="background:var(--bridge)"></i>bridge</span><span><i style="background:var(--break)"></i>break</span><span><i style="background:var(--particle)"></i>particle</span></div>
+        </div>
+        <div class="scroll"><table class="read" id="readout"></table></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Noise explorer</h2>
+    <p class="lead">The same bridged pattern, scanned with more or fewer frames. Watch the classical LER climb as noise rises while the U-Net stays close to the true value.</p>
+    <div class="explore">
+      <div>
+        <div class="slider">
+          <label for="frames">SEM frames averaged <output id="fr-out"></output></label>
+          <input type="range" id="frames" min="0" max="5" step="1" value="1">
+          <div class="ticks"><span>1</span><span>2</span><span>4</span><span>8</span><span>16</span><span>32</span></div>
+        </div>
+        <div class="stage" id="ex-stage"><img id="ex-img" alt="SEM image at the selected noise level"><img id="ex-ov" alt=""><svg id="ex-box" viewBox="0 0 192 192" aria-hidden="true"></svg></div>
+        <div class="toggles"><label><input type="checkbox" id="ex-t" checked>U-Net map</label></div>
+      </div>
+      <div class="scroll"><table class="read" id="ex-read"></table></div>
+    </div>
+  </section>
+
+  <section class="charts">
+    <div class="panel chart">
+      <h2>CD error vs SEM frames</h2>
+      <svg id="c-cd" viewBox="0 0 480 300" role="img" aria-label="CD RMSE versus frames for U-Net and classical"></svg>
+      <div class="legend"><span><i style="background:var(--unet)"></i>U-Net</span><span><i style="background:var(--classic)"></i>Classical</span><span>solid: all images · dashed: defect-free</span></div>
+    </div>
+    <div class="panel chart">
+      <h2>LER bias vs SEM frames</h2>
+      <svg id="c-ler" viewBox="0 0 480 300" role="img" aria-label="LER bias versus frames"></svg>
+      <div class="legend"><span><i style="background:var(--unet)"></i>U-Net</span><span><i style="background:var(--classic)"></i>Classical</span><span>measured − true, 3σ</span></div>
+    </div>
+  </section>
+
+  <section class="panel fem">
+    <h2>Closing the loop with Phase 1</h2>
+    <p class="lead" id="fem-text"></p>
+    <img id="fem-img" alt="Bossung curves measured from SEM images and a defect map of the focus-exposure wafer">
+  </section>
+
+  <section class="panel notes">
+    <h2>How it was built</h2>
+    <ul>
+      <li>Images are rendered from the Phase-1 simulator's CD and LER: correlated edge roughness, bright SEM edge bands, charging trails, beam blur, shot noise and scan-line jitter. Defects are drawn with their pixel labels.</li>
+      <li>Training: 2,400 images, 300 for validation; test: 900 images, 150 at each noise level. Nothing here comes from a real SEM.</li>
+      <li>CD comes from the 0.5 crossing of the line probability on every scan row, skipping rows that touch a predicted defect. Both methods get one constant offset calibrated on the validation set, as a real CD-SEM is calibrated against reference metrology.</li>
+      <li>The classical baseline smooths five scan lines, finds the bright edge peaks with sub-pixel fits and rejects outlier widths. It does not correct LER for noise, which many production tools now do.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const $ = id => document.getElementById(id);
+const R = DATA.results, BF = R.by_frames, FR = [1,2,4,8,16,32];
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = v => v==null ? "—" : v.toFixed(1);
+const COL = {bridge:"--bridge", break:"--break", particle:"--particle"};
+
+// KPIs (at 2 frames: a fast inline scan)
+const k2 = BF["2"];
+$("kpis").innerHTML = [
+  ["CD error, 2 frames", `${k2.cd_rmse_unet.toFixed(1)}<small> nm</small>`, `classical ${k2.cd_rmse_classical.toFixed(1)} nm`],
+  ["LER bias, 2 frames", `${(k2.ler_bias_unet>=0?"+":"")}${k2.ler_bias_unet.toFixed(1)}<small> nm</small>`, `classical ${k2.ler_bias_classical>=0?"+":""}${k2.ler_bias_classical.toFixed(1)} nm`],
+  ["Defect calls correct", `${(100*R.defect_accuracy_overall).toFixed(1)}<small>%</small>`, "4 classes, all noise levels"],
+  ["CD error, 32 frames", `${BF["32"].cd_rmse_unet.toFixed(1)}<small> nm</small>`, `classical ${BF["32"].cd_rmse_classical.toFixed(1)} nm`]
+].map(([l,v,c])=>`<div class="kpi"><div class="lab">${l}</div><div class="val">${v}</div><div class="cmp">${c}</div></div>`).join("");
+
+function boxes(svg, it, show){
+  svg.innerHTML = show ? it.boxes.map(([x0,y0,x1,y1,n])=>
+    `<rect x="${x0-3}" y="${y0-3}" width="${x1-x0+6}" height="${y1-y0+6}" fill="none" stroke="${css(COL[n])}" stroke-width="1.6" rx="1.5"/>`).join("") : "";
+}
+function readout(it){
+  const e = (m,t) => m==null||t==null ? "" : `<div class="err">${m-t>=0?"+":""}${(m-t).toFixed(1)} nm</div>`;
+  const call = it.unet.defect===it.truth.defect ? "ok" : "bad";
+  return `<tr><th></th><th>True</th><th>U-Net</th><th>Classical</th></tr>
+    <tr><td>CD</td><td class="n">${fmt(it.truth.cd)} nm</td><td class="n">${fmt(it.unet.cd)}${e(it.unet.cd,it.truth.cd)}</td><td class="n">${fmt(it.classical.cd)}${e(it.classical.cd,it.truth.cd)}</td></tr>
+    <tr><td>LER (3σ)</td><td class="n">${fmt(it.truth.ler)} nm</td><td class="n">${fmt(it.unet.ler)}${e(it.unet.ler,it.truth.ler)}</td><td class="n">${fmt(it.classical.ler)}${e(it.classical.ler,it.truth.ler)}</td></tr>
+    <tr><td>Defect</td><td>${it.truth.defect}</td><td><span class="pill ${call}">${it.unet.defect}</span></td><td class="err">not detected by this method</td></tr>
+    <tr><td>Scan</td><td colspan="3" class="n">${it.truth.frames} frame${it.truth.frames>1?"s":""} · pitch ${it.truth.pitch} nm</td></tr>`;
+}
+
+// gallery
+let cur = 0;
+$("thumbs").innerHTML = DATA.gallery.map((g,i)=>`<button class="thumb" type="button" id="th-${i}" aria-pressed="${i===0}" aria-label="${g.truth.defect}, ${g.truth.frames} frames"><img src="${g.img}" alt=""><span class="tag">${g.truth.defect} · ${g.truth.frames}f</span></button>`).join("");
+DATA.gallery.forEach((_,i)=>$("th-"+i).addEventListener("click",()=>{cur=i; showGallery();}));
+function showGallery(){
+  const it = DATA.gallery[cur];
+  DATA.gallery.forEach((_,i)=>$("th-"+i).setAttribute("aria-pressed", i===cur));
+  $("st-img").src = it.img; $("st-ov").src = it.ov; $("st-ov").hidden = !$("t-ov").checked;
+  boxes($("st-box"), it, $("t-box").checked); $("readout").innerHTML = readout(it);
+}
+$("t-ov").addEventListener("change",showGallery); $("t-box").addEventListener("change",showGallery);
+
+// noise explorer
+function showExplorer(){
+  const i = +$("frames").value, it = DATA.explorer[i];
+  $("fr-out").textContent = FR[i];
+  $("ex-img").src = it.img; $("ex-ov").src = it.ov; $("ex-ov").hidden = !$("ex-t").checked;
+  boxes($("ex-box"), it, $("ex-t").checked); $("ex-read").innerHTML = readout(it);
+}
+$("frames").addEventListener("input",showExplorer); $("ex-t").addEventListener("change",showExplorer);
+
+// charts
+function lineChart(svg, series, yLab, zero){
+  const W=480,H=300,p={l:52,r:14,t:12,b:44};
+  const vals = series.flatMap(s=>s.v);
+  let y0 = Math.min(0, ...vals), y1 = Math.max(...vals);
+  const step = y1-y0 > 12 ? 5 : y1-y0 > 5 ? 2 : 1;
+  y0 = Math.floor(y0/step)*step; y1 = Math.ceil(y1/step)*step;
+  const X = i => p.l + i*(W-p.l-p.r)/(FR.length-1), Y = v => H-p.b-(v-y0)/(y1-y0)*(H-p.t-p.b);
+  let s = "";
+  for(let v=y0; v<=y1+1e-9; v+=step) s += `<line x1="${p.l}" x2="${W-p.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/><text x="${p.l-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" font-family="var(--mono)" fill="var(--muted)">${v}</text>`;
+  if(zero) s += `<line x1="${p.l}" x2="${W-p.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--ink2)" stroke-width="1"/>`;
+  FR.forEach((f,i)=> s += `<text x="${X(i)}" y="${H-p.b+16}" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--muted)">${f}</text>`);
+  s += `<text x="${(p.l+W-p.r)/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="var(--ink2)">SEM frames averaged</text>`;
+  s += `<text transform="translate(14 ${(p.t+H-p.b)/2}) rotate(-90)" text-anchor="middle" font-size="12" fill="var(--ink2)">${yLab}</text>`;
+  series.forEach(se=>{
+    s += `<polyline fill="none" stroke="var(${se.c})" stroke-width="2" ${se.dash?'stroke-dasharray="5 4" opacity=".6"':''} points="${se.v.map((v,i)=>`${X(i)},${Y(v)}`).join(" ")}"/>`;
+    if(!se.dash) s += se.v.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="3.5" fill="var(${se.c})"><title>${FR[i]} frames: ${v.toFixed(2)} nm</title></circle>`).join("");
+  });
+  svg.innerHTML = s;
+}
+lineChart($("c-cd"), [
+  {v:FR.map(f=>BF[f].cd_rmse_unet), c:"--unet"}, {v:FR.map(f=>BF[f].cd_rmse_classical), c:"--classic"},
+  {v:FR.map(f=>BF[f].cd_rmse_unet_clean), c:"--unet", dash:1}, {v:FR.map(f=>BF[f].cd_rmse_classical_clean), c:"--classic", dash:1}
+], "CD RMSE (nm)");
+lineChart($("c-ler"), [{v:FR.map(f=>BF[f].ler_bias_unet), c:"--unet"}, {v:FR.map(f=>BF[f].ler_bias_classical), c:"--classic"}], "LER bias (nm)", true);
+
+// FEM loop
+const L = R.fem_loop;
+$("fem-text").textContent = `A ${L.fields}-field focus-exposure wafer from the Phase-1 simulator, each printed field imaged with a fast 4-frame scan. `+
+  `U-Net CD error ${L.cd_rmse_unet.toFixed(1)} nm against ${L.cd_rmse_classical.toFixed(1)} nm for the classical algorithm; `+
+  `${(100*L.defect_accuracy).toFixed(0)}% of defect calls correct. Bridges cluster on the low-dose side and breaks on the high-dose side, as the process physics predicts.`;
+$("fem-img").src = DATA.fem_png;
+
+showGallery(); showExplorer();
+</script>

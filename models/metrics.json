@@ -1,0 +1,71 @@
+{
+  "ranges": {
+    "dose": [
+      18.0,
+      55.0
+    ],
+    "focus": [
+      -180.0,
+      180.0
+    ],
+    "pitch": [
+      180.0,
+      400.0
+    ],
+    "thickness": [
+      100.0,
+      160.0
+    ],
+    "peb_temp": [
+      100.0,
+      130.0
+    ],
+    "peb_time": [
+      45.0,
+      90.0
+    ]
+  },
+  "clf_xgb": {
+    "accuracy": 0.95625,
+    "roc_auc": 0.9938511676057242
+  },
+  "clf_mlp": {
+    "accuracy": 0.951875,
+    "roc_auc": 0.9891488433408239
+  },
+  "cd_xgb": {
+    "rmse_vs_measured": 7.1613147660711896,
+    "rmse_vs_true": 6.210684543321015,
+    "r2_vs_measured": 0.9608255270857362,
+    "rmse_vs_true_in_70_110nm": 4.22789183974382
+  },
+  "cd_mlp": {
+    "rmse_vs_measured": 5.789401180557817,
+    "rmse_vs_true": 3.890650113849176,
+    "r2_vs_measured": 0.9743973495696542,
+    "rmse_vs_true_in_70_110nm": 2.5609111582777184
+  },
+  "cd_noise_floor_rmse(measured_vs_true)": 4.432917186700916,
+  "cd_noise_floor_rmse_in_70_110nm": 1.933617909687937,
+  "ler_mlp": {
+    "rmse": 3.8816915770264644,
+    "r2": 0.7123151601261344
+  },
+  "speed": {
+    "sim_ms_per_field": 2.406000534999748,
+    "xgb_us_per_field": 16.879089200000408,
+    "mlp_us_per_field": 1.2041103499996098,
+    "speedup_xgb": 142.54326797441712,
+    "speedup_mlp": 1998.1561781281323
+  },
+  "n_train": 6400,
+  "n_test": 1600,
+  "feature_importance": {
+    "pitch": 0.03889999911189079,
+    "focus": 0.0568000003695488,
+    "thickness": 0.07970000058412552,
+    "peb_time": 0.14309999346733093,
+    "peb_temp": 0.29600000381469727,
+    "dose": 0.3856000006198883
+  }
+}

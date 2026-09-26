@@ -1,0 +1,140 @@
+{
+  "area_thresholds_px": {
+    "particle": 1,
+    "bridge": 1,
+    "break": 1
+  },
+  "val_defect_accuracy": 0.9966666666666667,
+  "cd_offset_calibration_nm": {
+    "unet": -1.1624040823569786,
+    "classical": -2.838087982035187
+  },
+  "by_frames": {
+    "1": {
+      "cd_rmse_unet": 0.4322467837792454,
+      "cd_rmse_classical": 6.138649410480483,
+      "cd_rmse_unet_clean": 0.431665733803362,
+      "cd_rmse_classical_clean": 5.810867185127553,
+      "ler_bias_unet": 0.064586049219008,
+      "ler_bias_classical": 11.383651725170235,
+      "ler_rmse_unet": 0.6454016042093751,
+      "ler_rmse_classical": 15.149235952764617,
+      "defect_accuracy": 0.9733333333333334,
+      "unet_failed": 0,
+      "classical_failed": 0
+    },
+    "2": {
+      "cd_rmse_unet": 0.29552616046343794,
+      "cd_rmse_classical": 4.90150368874303,
+      "cd_rmse_unet_clean": 0.22652688286918207,
+      "cd_rmse_classical_clean": 0.832181096230696,
+      "ler_bias_unet": -0.11563705338578688,
+      "ler_bias_classical": 3.6933774771988874,
+      "ler_rmse_unet": 0.555498370387539,
+      "ler_rmse_classical": 9.598303204295123,
+      "defect_accuracy": 0.9733333333333334,
+      "unet_failed": 0,
+      "classical_failed": 0
+    },
+    "4": {
+      "cd_rmse_unet": 0.2138588093936928,
+      "cd_rmse_classical": 0.6335626667196195,
+      "cd_rmse_unet_clean": 0.1795561410746699,
+      "cd_rmse_classical_clean": 0.3792698300074362,
+      "ler_bias_unet": -0.17096542708207646,
+      "ler_bias_classical": 0.4700857306775744,
+      "ler_rmse_unet": 0.529355671955709,
+      "ler_rmse_classical": 1.9618110629568688,
+      "defect_accuracy": 0.9866666666666667,
+      "unet_failed": 0,
+      "classical_failed": 0
+    },
+    "8": {
+      "cd_rmse_unet": 0.21422962186970548,
+      "cd_rmse_classical": 1.857588766316258,
+      "cd_rmse_unet_clean": 0.21357369571319387,
+      "cd_rmse_classical_clean": 0.8639622578144788,
+      "ler_bias_unet": -0.27040405509086723,
+      "ler_bias_classical": 0.3217574916292901,
+      "ler_rmse_unet": 0.5047605107475476,
+      "ler_rmse_classical": 3.14950159841047,
+      "defect_accuracy": 1.0,
+      "unet_failed": 0,
+      "classical_failed": 0
+    },
+    "16": {
+      "cd_rmse_unet": 0.24475701676695114,
+      "cd_rmse_classical": 0.4273088230910396,
+      "cd_rmse_unet_clean": 0.15414126900767086,
+      "cd_rmse_classical_clean": 0.3288753257305666,
+      "ler_bias_unet": -0.2298966492886266,
+      "ler_bias_classical": -0.017202643078351953,
+      "ler_rmse_unet": 0.5040190708667643,
+      "ler_rmse_classical": 1.5977681833403903,
+      "defect_accuracy": 0.9933333333333333,
+      "unet_failed": 0,
+      "classical_failed": 0
+    },
+    "32": {
+      "cd_rmse_unet": 0.23210525258986078,
+      "cd_rmse_classical": 0.42123861520006717,
+      "cd_rmse_unet_clean": 0.18185959721100203,
+      "cd_rmse_classical_clean": 0.3639831029113323,
+      "ler_bias_unet": -0.1575232735904282,
+      "ler_bias_classical": -0.07750859055124117,
+      "ler_rmse_unet": 0.4388895396611789,
+      "ler_rmse_classical": 0.5658711516971263,
+      "defect_accuracy": 0.9933333333333333,
+      "unet_failed": 0,
+      "classical_failed": 0
+    }
+  },
+  "defect_accuracy_overall": 0.9866666666666667,
+  "confusion": {
+    "none": {
+      "none": 352,
+      "bridge": 1,
+      "break": 7,
+      "particle": 2
+    },
+    "bridge": {
+      "none": 0,
+      "bridge": 169,
+      "break": 0,
+      "particle": 0
+    },
+    "break": {
+      "none": 1,
+      "bridge": 0,
+      "break": 186,
+      "particle": 0
+    },
+    "particle": {
+      "none": 1,
+      "bridge": 0,
+      "break": 0,
+      "particle": 181
+    }
+  },
+  "fem_loop": {
+    "fields": 102,
+    "imaged": 94,
+    "cd_rmse_unet": 1.0190421456634702,
+    "cd_rmse_classical": 20.32280845592571,
+    "cd_rmse_unet_clean": 0.13047912663618266,
+    "cd_rmse_classical_clean": 0.22027058290149543,
+    "defect_accuracy": 0.9893617021276596,
+    "defect_counts_true": {
+      "none": 65,
+      "bridge": 16,
+      "break": 11,
+      "particle": 2
+    },
+    "defect_counts_pred": {
+      "none": 66,
+      "bridge": 16,
+      "break": 10,
+      "particle": 2
+    }
+  }
+}
