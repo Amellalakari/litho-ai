@@ -3,7 +3,7 @@
 Physics-based lithography simulation, ML surrogate models, Bayesian process-window centring and
 deep-learning CD-SEM image analysis, built end to end for a 90 nm line/space layer on a dry ArF scanner.
 
-**Live demos (run in the browser):** https://USERNAME.github.io/litho-ai/ ·
+**Live demos (run in the browser):** https://Amellalakari.github.io/litho-ai/ ·
 **Walkthrough notebook:** [`notebooks/walkthrough.ipynb`](notebooks/walkthrough.ipynb) (runs in ~1 minute) ·
 **Full results:** [`docs/TECHNICAL_REPORT.md`](docs/TECHNICAL_REPORT.md)
 
@@ -64,7 +64,7 @@ as large as its signal), and with four process knobs BO only matches a grid of F
 ## Quick start
 
 ```bash
-git clone https://github.com/USERNAME/litho-ai.git && cd litho-ai
+git clone https://github.com/Amellalakari/litho-ai.git && cd litho-ai
 pip install -r requirements.txt
 jupyter notebook notebooks/walkthrough.ipynb     # uses the trained models in models/
 ```
